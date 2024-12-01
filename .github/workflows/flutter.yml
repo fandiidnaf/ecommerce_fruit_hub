@@ -1,0 +1,45 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches:
+      - main # Pipeline dijalankan jika ada perubahan di branch 'main'
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Checkout kode dari repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Install Flutter
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0' # Sesuaikan dengan versi Flutter yang digunakan
+
+    # Install dependencies
+    - name: Install dependencies
+      run: flutter pub get
+
+    # Jalankan pengujian
+    - name: Run tests
+      run: flutter test
+
+    # Build APK
+    - name: Build APK
+      run: flutter build apk --release
+
+    # Build AAB
+    - name: Build AAB
+      run: flutter build appbundle --release
+
+    # (Opsional) Upload ke Artifact
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: Build-Artifacts
+        path: build/app/outputs/
